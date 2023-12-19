@@ -410,22 +410,65 @@ iface eth0 inet dhcp
 
 ## Soal-Soal
 ### Soal 1
+> Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Aura menggunakan iptables, tetapi tidak ingin menggunakan MASQUERADE.
 
 #### Script
-
+```
+/sbin/iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source $(/sbin/ip -4 a show eth0 | /bin/grep -Po 'inet \K[0-9.]*')
+```
 #### Hasil
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/e640b905-c0f1-46db-a471-ea45fb199cfe)
 
 ### Soal 2
+> Kalian diminta untuk melakukan drop semua TCP dan UDP kecuali port 8080 pada TCP.
 
 #### Script
+```
+#No 2
+
+iptables -F
+
+iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p udp --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp -j DROP
+iptables -A INPUT -p udp -j DROP
+```
 
 #### Hasil
+
+Packet didrop
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/ac907f4e-6e69-4a3d-863a-3bdea14dfc0e)
+
+Packet tidak didrop
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/2e45ede1-b24d-4acf-aac9-d442f1c3a874)
+
 
 ### Soal 3
+> Kepala Suku North Area meminta kalian untuk membatasi DHCP dan DNS Server hanya dapat dilakukan ping oleh maksimal 3 device secara bersamaan, selebihnya akan di drop.
 
 #### Script
 
+Pada Fern
+```
+# No 3
+# Ritcher
+iptables -t mangle -A PREROUTING -d 10.49.14.146 -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROPLOG
+# Revolte
+iptables -t mangle -A PREROUTING -d 10.49.14.150 -p icmp -m connlimit --connlimit-above 3 --connlimit-mask 0 -j DROPLOG
+```
+
 #### Hasil
+
+3 Client ping secara bersamaan
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/3fcc124e-646e-41fb-9c37-5c1960bb35b1)
+
+Client ke-4
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/0be5c8e3-31ca-4b7a-9009-3c284754ff15)
 
 ### Soal 4
 
