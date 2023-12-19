@@ -312,6 +312,102 @@ service isc-dhcp-server restart
 service isc-dhcp-server status
 ```
 
+### Ritcher (DNS Server)
+
+Network Config
+```
+auto eth0
+iface eth0 inet static
+    address 10.49.14.146
+    gateway 10.49.14.145
+    netmask 255.255.255.252
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf    
+```
+
+### Sein (Web Server)
+
+Network Config
+```
+auto eth0
+iface eth0 inet static
+    address 10.49.8.2
+    gateway 10.49.8.1
+    netmask 255.255.252.0
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf    
+```
+
+Script Webserver
+```
+apt-get install nginx
+
+echo '
+    <h1>Sein nih boss</h1>
+' > /var/www/html/index.nginx-debian.html
+
+echo 'server {
+        listen 80 default_server;
+        listen 443 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+}' > /etc/nginx/sites-available/default
+
+service nginx restart
+```
+
+### Stark
+
+Network Config
+```
+auto eth0
+iface eth0 inet static
+    address 10.49.14.142
+    gateway 10.49.14.141
+    netmask 255.255.255.252
+    up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Script Webserver
+```
+apt-get install nginx
+
+echo '
+    <h1>Stark nih boss</h1>
+' > /var/www/html/index.nginx-debian.html
+
+echo 'server {
+        listen 80 default_server;
+        listen 443 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+}' > /etc/nginx/sites-available/default
+
+service nginx restart
+```
+
+### Client (Node yang belum disebut)
+
+Network Config
+```
+auto eth0
+iface eth0 inet dhcp
+```
+
 ## Soal-Soal
 ### Soal 1
 
