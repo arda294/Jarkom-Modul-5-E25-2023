@@ -1,4 +1,4 @@
-# Jarkom-Modul-5-E25-2023
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/a748a8df-a00f-48c8-8ad7-662fe5356b40)# Jarkom-Modul-5-E25-2023
 Berikut adalah laporan resmi untuk pengerjaan Praktikum Modul 5 Jarkom Firewall
 ## Anggota Kelompok E25
 | Nama | NRP |
@@ -471,46 +471,165 @@ Client ke-4
 ![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/0be5c8e3-31ca-4b7a-9009-3c284754ff15)
 
 ### Soal 4
+> Lakukan pembatasan sehingga koneksi SSH pada Web Server hanya dapat dilakukan oleh masyarakat yang berada pada GrobeForest.
 
 #### Script
 
+Pada Sein dan Stark
+```
+iptables -A INPUT -p tcp --dport 22 -m iprange --src-range 10.49.8.3-10.49.11.254  -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 22 -m iprange --dst-range 10.49.8.3-10.49.11.254 -j ACCEPT
+
+iptables -A INPUT -p all -j DROP
+```
+
 #### Hasil
+
+GrobeForest
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/d6a31643-8771-45b5-b34b-0af19d510b68)
+
+Selain GrobeForest
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/70660cfa-918b-44a1-8c3b-307f2cd5557e)
 
 ### Soal 5
+> Selain itu, akses menuju WebServer hanya diperbolehkan saat jam kerja yaitu Senin-Jumat pada pukul 08.00-16.00.
 
 #### Script
 
+Pada Sein dan Stark
+```
+#No 5
+iptables -A INPUT -m time --weekdays Sat,Sun -j DROP
+iptables -A INPUT -p all -m time --timestart 16:00 --timestop 23:59:59 -j DROPLOG
+iptables -A INPUT -p all -m time --timestart 00:00 --timestop 08:00 -j DROPLOG
+```
+
 #### Hasil
+
+Packet accept
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/f27a4eae-5436-491a-bdd1-ab2a0d4f03a3)
+
+
+Packet di drop (tidak ada respon)
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/4e8bbf04-99b2-4fd2-993f-8d06c7b6881b)
 
 ### Soal 6
+> Lalu, karena ternyata terdapat beberapa waktu di mana network administrator dari WebServer tidak bisa stand by, sehingga perlu ditambahkan rule bahwa akses pada hari Senin - Kamis pada jam 12.00 - 13.00 dilarang (istirahat maksi cuy) dan akses di hari Jumat pada jam 11.00 - 13.00 juga dilarang (maklum, Jumatan rek).
 
 #### Script
 
+Pada Sein dan Stark
+```
+#No 6
+iptables -A INPUT -p all -m time --timestart 11:00 --timestop 13:00 --weekdays Fri -j DROPLOG
+iptables -A INPUT -p all -m time --timestart 12:00 --timestop 13:00 --weekdays Mon,Tue,Wed,Thu -j DROPLOG
+```
+
 #### Hasil
+
+Packet accept
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/f27a4eae-5436-491a-bdd1-ab2a0d4f03a3)
+
+
+Packet di drop (tidak ada respon)
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/4e8bbf04-99b2-4fd2-993f-8d06c7b6881b)
 
 ### Soal 7
+> Karena terdapat 2 WebServer, kalian diminta agar setiap client yang mengakses Sein dengan Port 80 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan dan request dari client yang mengakses Stark dengan port 443 akan didistribusikan secara bergantian pada Sein dan Stark secara berurutan.
 
 #### Script
 
+Pada Sein
+```
+#No 7 Load Balancing
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+iptables -t nat -A PREROUTING -p tcp --dport 80 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.49.14.142:80
+iptables -t nat -A POSTROUTING -p tcp --dport 80 -j SNAT --to-source 10.49.8.2
+```
+
+Pada Stark
+```
+#No 7 Load Balancing
+iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+
+iptables -t nat -A PREROUTING -p tcp --dport 443 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.49.8.2:443
+iptables -t nat -A POSTROUTING -p tcp --dport 443 -j SNAT --to-source 10.49.14.142
+```
+
 #### Hasil
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/ee6118f9-aaf2-438f-a04c-b5703db75a7c)
 
 ### Soal 8
+> Karena berbeda koalisi politik, maka subnet dengan masyarakat yang berada pada Revolte dilarang keras mengakses WebServer hingga masa pencoblosan pemilu kepala suku 2024 berakhir. Masa pemilu (hingga pemungutan dan penghitungan suara selesai) kepala suku bersamaan dengan masa pemilu Presiden dan Wakil Presiden Indonesia 2024.
 
 #### Script
 
+Pada Sein dan Stark
+```
+#No 8
+iptables -A INPUT -p all -s 10.49.14.148/30 -m time --datestart 2024-02-14 --datestop 2024-06-26  -j DROPLOG
+```
+
 #### Hasil
+
+Packet di drop (Tidak ada respon)
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/f40e2618-de47-4b18-b9d6-9e673938f69b)
+
+
+Packet accept
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/d66d7a69-427e-446b-b7f1-baa997b2480d)
+
 
 ### Soal 9
+> Sadar akan adanya potensial saling serang antar kubu politik, maka WebServer harus dapat secara otomatis memblokir  alamat IP yang melakukan scanning port dalam jumlah banyak (maksimal 20 scan port) di dalam selang waktu 10 menit. 
+(clue: test dengan nmap)
 
 #### Script
 
+Pada Sein dan Stark
+```
+#No 9
+iptables -A INPUT -p all -m state --state NEW -m recent --set --name Portscans
+iptables -A INPUT -p all -m recent --rcheck --seconds 600 --hitcount 20 --name Portscans -j DROPLOG
+```
+
 #### Hasil
+
+Scan 5 Port
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/d9fc5203-29a7-4f18-b6a0-73cb5827ebb9)
+
+Scan lebih dari 20 port
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/c9c36965-45c0-41be-9ab9-48a519ac1d70)
+
 
 ### Soal 10
+> Karena kepala suku ingin tau paket apa saja yang di-drop, maka di setiap node server dan router ditambahkan logging paket yang di-drop dengan standard syslog level.
 
 #### Script
 
-#### Hasil
+Tiap node yang drop packet
+```
+#No 10 Logging
+iptables -N DROPLOG
+iptables -A DROPLOG -j LOG --log-prefix "Dropped Packet:" --log-level debug
+iptables -A DROPLOG -j DROP
+```
+
+Jika ingin drop packet, lakukan jump ke target DROPLOG
 
 
 
