@@ -615,6 +615,9 @@ Scan lebih dari 20 port
 
 ![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/c9c36965-45c0-41be-9ab9-48a519ac1d70)
 
+Setelah diblokir (tidak ada respon)
+
+![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/56975f64-8fbf-4ec0-9a51-8764cb187b52)
 
 ### Soal 10
 > Karena kepala suku ingin tau paket apa saja yang di-drop, maka di setiap node server dan router ditambahkan logging paket yang di-drop dengan standard syslog level.
