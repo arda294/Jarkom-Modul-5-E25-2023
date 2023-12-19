@@ -1,4 +1,4 @@
-![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/a748a8df-a00f-48c8-8ad7-662fe5356b40)# Jarkom-Modul-5-E25-2023
+# Jarkom-Modul-5-E25-2023
 Berikut adalah laporan resmi untuk pengerjaan Praktikum Modul 5 Jarkom Firewall
 ## Anggota Kelompok E25
 | Nama | NRP |
