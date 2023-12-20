@@ -43,7 +43,7 @@ Berikut adalah laporan resmi untuk pengerjaan Praktikum Modul 5 Jarkom Firewall
  
 ## Topologi
 
-![image](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/114855785/7bad2ced-28e5-40ba-9c92-e4883fcad7ad)
+![topoo drawio](https://github.com/arda294/Jarkom-Modul-5-E25-2023/assets/108173647/37f33553-e0d3-40ed-a9f6-f19f7311f6fa)
 
 ## Konfigurasi Network Node
 
